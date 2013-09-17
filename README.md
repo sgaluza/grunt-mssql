@@ -1,15 +1,7 @@
 # grunt-mssql
 
-> All query to be excuted against a ms sql server
-
-## Getting Started
-This plugin requires Grunt `~0.4.1`
-
-If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
-
-```shell
-npm install grunt-mssql --save-dev
-```
+> A wrapper around tedious for executing query against Microsoft Sql Server.  This is not meant to be used in a 
+production enviroment but more for E2E testing where there is a need to take database snapshot and restoring the snapshot.
 
 Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
 
@@ -26,10 +18,12 @@ In your project's Gruntfile, add a section named `mssql` to the data object pass
 grunt.initConfig({
   mssql: {
     options: {
-      // Task-specific options go here.
+      server: '',
+      userName: '',
+      password: ''
     },
-    your_target: {
-      // Target-specific file lists and/or options go here.
+    restore: {
+      query: ''
     },
   },
 })
@@ -37,17 +31,29 @@ grunt.initConfig({
 
 ### Options
 
-#### options.separator
+#### server
 Type: `String`
-Default value: `',  '`
+Default value: `''`
 
-A string value that is used to do something with whatever.
+Location of the MS Sql Server.
 
-#### options.punctuation
+#### userName
 Type: `String`
 Default value: `'.'`
 
-A string value that is used to do something else with whatever else.
+Account to log in to the server
+
+#### password
+Type: `String`
+Default value: `'.'`
+
+Password for the account
+
+#### query
+Type: `String`
+Default value: `'.'`
+
+Sql statement to be executed
 
 ### Usage Examples
 
@@ -56,34 +62,18 @@ In this example, the default options are used to do something with whatever. So 
 
 ```js
 grunt.initConfig({
-  mssql: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
+    mssql:{
+        options: {
+            server: '127.0.0.1',
+            userName: 'user',
+            password: 'password'
+        },
+        snapshot: {
+            query: "EXECUTE SomeStoreProcedueToTakeSnapshot;"
+        },
+        restore: {
+            query: "RESTORE DATABASE MyDatabase FROM DATABASE_SNAPSHOT = 'MyDatabaseSnapShot';"
+        }
+    }
 })
 ```
-
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
-
-```js
-grunt.initConfig({
-  mssql: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-})
-```
-
-## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
-
-## Release History
-_(Nothing yet)_
