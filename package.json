@@ -2,22 +2,22 @@
   "name": "grunt-mssql",
   "description": "All query to be excuted against a ms sql server",
   "version": "0.1.0",
-  "homepage": "https://github.com/phung/grunt-mssql",
+  "homepage": "https://github.com/sgaluza/grunt-mssql.git",
   "author": {
     "name": "Dung Phung",
     "email": "dkphung@ucdavis.edu"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/phung/grunt-mssql.git"
+    "url": "git://github.com/sgaluza/grunt-mssql.git"
   },
   "bugs": {
-    "url": "https://github.com/phung/grunt-mssql/issues"
+    "url": "https://github.com/sgaluza/grunt-mssql/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/phung/grunt-mssql/blob/master/LICENSE-MIT"
+      "url": "https://github.com/sgaluza/grunt-mssql/blob/master/LICENSE-MIT"
     }
   ],
   "main": "Gruntfile.js",
