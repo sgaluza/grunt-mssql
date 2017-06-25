@@ -1,38 +1,46 @@
 'use strict';
 
-module.exports = function(grunt) {
-  grunt.registerMultiTask('mssql', 'query to be excuted against a ms sql server', function() {
-      // Merge task-specific and/or target-specific options with these defaults.
-      var options = this.options({
-        server: '',
-        userName: '',
-        password: ''
-      });
 
-      var Connection = require('tedious').Connection;
-      var Request = require('tedious').Request;
+module.exports = async function (grunt) {
 
-      var connection = new Connection({
-          server: options.server,
-          userName: options.userName,
-          password: options.password
-      });
+  grunt.registerMultiTask('mssql', 'query to be excuted against a ms sql server', function () {
 
-      var query = this.data.query;
-      var done = this.async();
-      connection.on('connect', function() {
-          var request = new Request(query, function(err, rowCount) {
-              connection.close();
-              if (err) {
-                grunt.log.error(err);
-                done(false);
-              } else{
-                grunt.log.ok("Query excuted: " + query);
-                done();
-              }
-          });
-          connection.execSql(request);
+    const done = this.async();
+    const Connection = require('tedious').Connection;
+
+    const connect = async function (options) {
+      return new Promise((res, rej) => {
+        const connection = new Connection(this.options);
+        connection.on('connect', () => res(connection));
+        connection.on('error', (err) => rej(err));
+      })
+    }
+
+    const exec = async function (connection, query) {
+      const Request = require('tedious').Request;
+      return new Promise((res, rej) => {
+        const request = new Request(query, function (err, rowCount, rows) {
+          if (err) return rej(err);
+          res(rows);
+        });
+        connection.execSql(request);
       });
+    }
+
+    const queries = this.data.query.constructor === Array ? this.data.query : [this.data.query];
+
+    try {
+      const connection = await connect(this.options)
+      for (const query of queries)
+        await exec(connection, query);
+      connection.close();
+      grunt.log.ok("Queries excuted!");
+      done();
+    }
+    catch (err) {
+      grunt.log.error(err);
+      done(err);
+    }
+
   });
-
 };
